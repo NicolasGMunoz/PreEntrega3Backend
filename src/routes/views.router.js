@@ -48,9 +48,9 @@ router
 		productDetail
 	)
 	.get(
-		"/carts/:cid",
+		"/carts/detail",
 		passportCall(passportStrategiesEnum.JWT),
-		handlePolicies([accessRolesEnum.USER, accessRolesEnum.ADMIN]),
+		handlePolicies([accessRolesEnum.USER]),
 		generateCustomResponse,
 		cartDetail
 	)

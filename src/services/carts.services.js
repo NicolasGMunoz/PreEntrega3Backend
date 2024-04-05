@@ -4,10 +4,10 @@ import CartsRepository from "../repositories/carts.repository.js";
 import ProductsRepository from "../repositories/products.repository.js";
 import { validateCart } from "../schemas/carts.schema.js";
 import { cartsFilePath } from "../utils.js";
+import { generateTicket } from "./tickets.services.js";
 
-
-const cartsRepository = new CartsRepository()
-const productsRepository = new ProductsRepository()
+const cartsRepository = new CartsRepository();
+const productsRepository = new ProductsRepository();
 const productsManager = new Products();
 const cartsManager = new Carts();
 
@@ -16,7 +16,7 @@ export const getCart = async (cid) => {
 	return cart;
 };
 export const createCart = async () => {
-	const cart = await cartsRepository.create()
+	const cart = await cartsRepository.create();
 	return cart;
 };
 export const addProduct = async (cid, pid) => {
@@ -33,7 +33,7 @@ export const updateProducts = async (cid, pid, quantity) => {
 		pid,
 		quantity
 	);
-	return updatedQuantityCart
+	return updatedQuantityCart;
 };
 
 export const deleteCartProducts = async (cid) => {
@@ -50,4 +50,22 @@ export const deleteProduct = async (cid, pid) => {
 
 export const purchaseProducts = async (cid, user) => {
 
-}
+	const cart = await cartsRepository.getCartById(cid);
+	const outStock = [];
+	let amount = 0;
+	cart.products.forEach(async ({ product, quantity }) => {
+		if (product.stock >= quantity) {
+			amount += product.price * quantity;
+			product.stock -= quantity;
+
+			await productsRepository.update(product._id, product);
+		} else {
+			outStock.push({ product, quantity });
+		}
+	})
+
+	const ticket = await generateTicket(user, amount)	
+	const cartUpdated = await cartsRepository.updateCart(cid, outStock)
+
+	return {ticket, cartUpdated}
+};
