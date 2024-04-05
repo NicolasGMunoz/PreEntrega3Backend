@@ -37,7 +37,7 @@ export const updateProducts = async (cid, pid, quantity) => {
 };
 
 export const deleteCartProducts = async (cid) => {
-	const result = await cartsRepository.deleteProduct(cid);
+	const result = await cartsRepository.deleteCartProducts(cid);
 	return result;
 };
 
