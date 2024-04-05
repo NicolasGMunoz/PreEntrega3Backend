@@ -5,6 +5,7 @@ import { updateProducts as updateProductsServices } from "../services/carts.serv
 import { updateCart as updateCartServices } from "../services/carts.services.js";
 import { deleteProduct as deleteProductServices } from "../services/carts.services.js";
 import { deleteCartProducts as deleteCartProductsServices } from "../services/carts.services.js";
+import { purchaseProducts as purchaseProductsServices } from "../services/carts.services.js"
 
 import { getProduct as getProductServices } from "../services/products.services.js"
 
@@ -113,5 +114,16 @@ export const deleteProduct = async (req, res) => {
     if (error.message.toLowerCase().includes("not found"))
       return res.sendNotFoundError(error.message);
     return res.sendServerError(error.message);
+  }
+}
+
+export const purchaseProducts = async (req, res) => {
+  try {
+    const { cid } = req.params
+    const { user } = req.user
+
+    const result = await purchaseProductsServices(cid, user)
+  } catch (error) {
+
   }
 }
