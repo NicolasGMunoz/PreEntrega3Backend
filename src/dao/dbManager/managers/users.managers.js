@@ -1,4 +1,4 @@
-import usersModel from "../models/user.model";
+import usersModel from "../models/user.model.js";
 
 export default class Users {
 	getAll = async () => {
@@ -10,8 +10,13 @@ export default class Users {
 		return exists;
 	};
 
+	getByEmail = async (email) => {
+		const exists = await usersModel.findOne({email}).lean();
+		return exists;
+	}
+
 	create = async ({ first_name, last_name, email, age, password }) => {
-		const result = usersModel.create({
+		const result = await usersModel.create({
 			first_name,
 			last_name,
 			email,
@@ -20,4 +25,13 @@ export default class Users {
 		});
 		return result;
 	};
+
+	deleteCartFromUser = async ({email}) => {
+		const user = await usersModel.findOne({email}).lean()
+		if(user?.cart){
+			delete user?.cart
+			usersModel.findOneAndUpdate({email}, user)
+		}
+		return user
+	}
 }

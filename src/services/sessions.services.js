@@ -22,4 +22,3 @@ export const logout = async (email) => {
   const result = await usersManager.deleteCartFromUser(email);
   return result
 }
-
